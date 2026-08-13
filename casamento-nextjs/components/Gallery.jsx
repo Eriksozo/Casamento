@@ -64,6 +64,108 @@ export default function Gallery() {
                 </svg>
               </div>
             </div>
+            <div className="gallery-item" data-img="/gallery-09.jpg">
+              <img src="/gallery-09.jpg" alt="Erik e Mikaela - Momento 8" loading="lazy" decoding="async" />
+              <div className="gallery-overlay">
+                <svg className="gallery-icon" width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L13.5 8.5L20 9.5L15.5 14L17 20.5L11 17L5 20.5L6.5 14L2 9.5L8.5 8.5L11 2Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/></svg>
+              </div>
+            </div>
+            <div className="gallery-item" data-img="/gallery-10.jpg">
+              <img src="/gallery-10.jpg" alt="Erik e Mikaela - Momento 9" loading="lazy" decoding="async" />
+              <div className="gallery-overlay">
+                <svg className="gallery-icon" width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11,18 L4,11 C2,9 2,5 5,4 C8,3 11,6 11,6 C11,6 14,3 17,4 C20,5 20,9 18,11 L11,18Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/></svg>
+              </div>
+            </div>
+            <div className="gallery-item" data-img="/gallery-11.jpg">
+              <img src="/gallery-11.jpg" alt="Erik e Mikaela - Momento 10" loading="lazy" decoding="async" />
+              <div className="gallery-overlay">
+                <svg className="gallery-icon" width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="6" stroke="currentColor" strokeWidth="1.4"/><circle cx="11" cy="11" r="2.5" fill="currentColor"/></svg>
+              </div>
+            </div>
+            <div className="gallery-item" data-img="/gallery-12.jpg">
+              <img src="/gallery-12.jpg" alt="Erik e Mikaela - Momento 11" loading="lazy" decoding="async" />
+              <div className="gallery-overlay">
+                <svg className="gallery-icon" width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L13.5 8.5L20 9.5L15.5 14L17 20.5L11 17L5 20.5L6.5 14L2 9.5L8.5 8.5L11 2Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/></svg>
+              </div>
+            </div>
+            <div className="gallery-item" data-img="/gallery-13.jpg">
+              <img src="/gallery-13.jpg" alt="Erik e Mikaela - Momento 12" loading="lazy" decoding="async" />
+              <div className="gallery-overlay">
+                <svg className="gallery-icon" width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11,18 L4,11 C2,9 2,5 5,4 C8,3 11,6 11,6 C11,6 14,3 17,4 C20,5 20,9 18,11 L11,18Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/></svg>
+              </div>
+            </div>
+            <div className="gallery-item" data-img="/gallery-14.jpg">
+              <img src="/gallery-14.jpg" alt="Erik e Mikaela - Momento 13" loading="lazy" decoding="async" />
+              <div className="gallery-overlay">
+                <svg className="gallery-icon" width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="6" stroke="currentColor" strokeWidth="1.4"/><circle cx="11" cy="11" r="2.5" fill="currentColor"/></svg>
+              </div>
+            </div>
+            <div className="gallery-item" data-img="/gallery-15.jpg">
+              <img src="/gallery-15.jpg" alt="Erik e Mikaela - Momento 14" loading="lazy" decoding="async" />
+              <div className="gallery-overlay">
+                <svg className="gallery-icon" width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L13.5 8.5L20 9.5L15.5 14L17 20.5L11 17L5 20.5L6.5 14L2 9.5L8.5 8.5L11 2Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/></svg>
+              </div>
+            </div>
+            <div className="gallery-item" data-img="/gallery-16.jpg">
+              <img src="/gallery-16.jpg" alt="Erik e Mikaela - Momento 15" loading="lazy" decoding="async" />
+              <div className="gallery-overlay">
+                <svg className="gallery-icon" width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11,18 L4,11 C2,9 2,5 5,4 C8,3 11,6 11,6 C11,6 14,3 17,4 C20,5 20,9 18,11 L11,18Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/></svg>
+              </div>
+            </div>
+            <div className="gallery-item" data-img="/gallery-17.jpg">
+              <img src="/gallery-17.jpg" alt="Erik e Mikaela - Momento 16" loading="lazy" decoding="async" />
+              <div className="gallery-overlay">
+                <svg className="gallery-icon" width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="6" stroke="currentColor" strokeWidth="1.4"/><circle cx="11" cy="11" r="2.5" fill="currentColor"/></svg>
+              </div>
+            </div>
+            <div className="gallery-item" data-img="/gallery-18.jpg">
+              <img src="/gallery-18.jpg" alt="Erik e Mikaela - Momento 17" loading="lazy" decoding="async" />
+              <div className="gallery-overlay">
+                <svg className="gallery-icon" width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L13.5 8.5L20 9.5L15.5 14L17 20.5L11 17L5 20.5L6.5 14L2 9.5L8.5 8.5L11 2Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/></svg>
+              </div>
+            </div>
+            <div className="gallery-item" data-img="/gallery-19.jpg">
+              <img src="/gallery-19.jpg" alt="Erik e Mikaela - Momento 18" loading="lazy" decoding="async" />
+              <div className="gallery-overlay">
+                <svg className="gallery-icon" width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11,18 L4,11 C2,9 2,5 5,4 C8,3 11,6 11,6 C11,6 14,3 17,4 C20,5 20,9 18,11 L11,18Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/></svg>
+              </div>
+            </div>
+            <div className="gallery-item" data-img="/gallery-20.jpg">
+              <img src="/gallery-20.jpg" alt="Erik e Mikaela - Momento 19" loading="lazy" decoding="async" />
+              <div className="gallery-overlay">
+                <svg className="gallery-icon" width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="6" stroke="currentColor" strokeWidth="1.4"/><circle cx="11" cy="11" r="2.5" fill="currentColor"/></svg>
+              </div>
+            </div>
+            <div className="gallery-item" data-img="/gallery-21.jpg">
+              <img src="/gallery-21.jpg" alt="Erik e Mikaela - Momento 20" loading="lazy" decoding="async" />
+              <div className="gallery-overlay">
+                <svg className="gallery-icon" width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L13.5 8.5L20 9.5L15.5 14L17 20.5L11 17L5 20.5L6.5 14L2 9.5L8.5 8.5L11 2Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/></svg>
+              </div>
+            </div>
+            <div className="gallery-item" data-img="/gallery-22.jpg">
+              <img src="/gallery-22.jpg" alt="Erik e Mikaela - Momento 21" loading="lazy" decoding="async" />
+              <div className="gallery-overlay">
+                <svg className="gallery-icon" width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11,18 L4,11 C2,9 2,5 5,4 C8,3 11,6 11,6 C11,6 14,3 17,4 C20,5 20,9 18,11 L11,18Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/></svg>
+              </div>
+            </div>
+            <div className="gallery-item" data-img="/gallery-23.jpg">
+              <img src="/gallery-23.jpg" alt="Erik e Mikaela - Momento 22" loading="lazy" decoding="async" />
+              <div className="gallery-overlay">
+                <svg className="gallery-icon" width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="6" stroke="currentColor" strokeWidth="1.4"/><circle cx="11" cy="11" r="2.5" fill="currentColor"/></svg>
+              </div>
+            </div>
+            <div className="gallery-item" data-img="/gallery-24.jpg">
+              <img src="/gallery-24.jpg" alt="Erik e Mikaela - Momento 23" loading="lazy" decoding="async" />
+              <div className="gallery-overlay">
+                <svg className="gallery-icon" width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L13.5 8.5L20 9.5L15.5 14L17 20.5L11 17L5 20.5L6.5 14L2 9.5L8.5 8.5L11 2Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/></svg>
+              </div>
+            </div>
+            <div className="gallery-item" data-img="/gallery-25.jpg">
+              <img src="/gallery-25.jpg" alt="Erik e Mikaela - Momento 24" loading="lazy" decoding="async" />
+              <div className="gallery-overlay">
+                <svg className="gallery-icon" width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11,18 L4,11 C2,9 2,5 5,4 C8,3 11,6 11,6 C11,6 14,3 17,4 C20,5 20,9 18,11 L11,18Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/></svg>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -74,7 +176,7 @@ export default function Gallery() {
         <button className="lightbox-nav lightbox-prev" aria-label="Anterior">‹</button>
         <button className="lightbox-nav lightbox-next" aria-label="Próxima">›</button>
         <img className="lightbox-img" id="lightboxImg" alt="" />
-        <div className="lightbox-counter" id="lightboxCounter">1 / 7</div>
+        <div className="lightbox-counter" id="lightboxCounter">1 / 24</div>
       </div>
 
 

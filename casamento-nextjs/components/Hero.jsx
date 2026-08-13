@@ -2,11 +2,9 @@ export default function Hero() {
   return (
     <section className="hero">
 
-      {/* Vídeo de fundo (vertical, mobile-first) */}
+      {/* Foto de fundo (vertical, mobile-first) */}
       <div className="hero__media" aria-hidden="true">
-        <video className="hero__video" autoPlay muted loop playsInline preload="auto">
-          <source src="/hero-bg.mp4" type="video/mp4" />
-        </video>
+        <img className="hero__photo" src="/hero-bg.jpg" alt="Erik e Mikaela em frente à igreja" />
         <div className="hero__veil"></div>
       </div>
 

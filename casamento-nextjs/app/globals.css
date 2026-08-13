@@ -1161,6 +1161,26 @@ img { display: block; max-width: 100%; height: auto; }
 /* playing state */
 .music-btn.playing .icon-play  { opacity: 0; }
 .music-btn.playing .icon-pause { opacity: 1; }
+
+/* carregando: o som foi pedido mas ainda não saiu. Sem isso o botão dizia
+   "tocando" no silêncio, o convidado apertava para consertar e esse toque
+   cancelava a reprodução que estava a caminho. */
+.music-btn.loading { cursor: progress; }
+.music-btn.loading .icon-play { opacity: .35; }
+.music-btn.loading::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1.5px solid transparent;
+  border-top-color: var(--sage);
+  animation: music-loading .9s linear infinite;
+}
+@keyframes music-loading { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .music-btn.loading::after { animation-duration: 2.4s; }
+}
 .music-btn.playing .music-btn__disc {
   animation: spin 8s linear infinite;
   border-color: rgba(136,150,69,.8);

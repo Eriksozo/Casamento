@@ -5,7 +5,7 @@ export default function Footer() {
 
         {/* logo real no footer */}
         <div className="footer__logo" data-anim="sc">
-          <img src="/logo.png" alt="Erik e Mikaela — Monograma E|M" />
+          <img src="/fotos/logo-900.png" alt="Erik e Mikaela — Monograma E|M" />
         </div>
 
         <div className="footer__rule" data-anim="in" data-delay="100"></div>

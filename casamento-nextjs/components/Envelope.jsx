@@ -44,7 +44,7 @@ export default function Envelope() {
       {/* Centro: logo + CTA */}
       <div className="envelope__center">
         <div className="envelope__logo">
-          <img src="/logo.png" alt="Erik e Mikaela — Convite de Casamento" />
+          <img src="/fotos/logo-900.png" alt="Erik e Mikaela — Convite de Casamento" />
         </div>
         <div className="envelope__line"></div>
         <div className="envelope__cta">

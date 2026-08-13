@@ -1,10 +1,26 @@
+import { HERO, LARGURA_FOTO } from '../lib/fotos';
+
 export default function Hero() {
   return (
     <section className="hero">
 
-      {/* Foto de fundo (vertical, mobile-first) */}
+      {/* Foto de fundo (vertical, mobile-first).
+          É a maior imagem da primeira dobra, então carrega cedo e com
+          prioridade alta — as fotos da galeria é que são lazy. */}
       <div className="hero__media" aria-hidden="true">
-        <img className="hero__photo" src="/hero-bg.jpg" alt="Erik e Mikaela em frente à igreja" />
+        <picture>
+          <source type="image/avif" srcSet={`/fotos/${HERO.base}-${LARGURA_FOTO}.avif`} />
+          <source type="image/webp" srcSet={`/fotos/${HERO.base}-${LARGURA_FOTO}.webp`} />
+          <img
+            className="hero__photo"
+            src={`/fotos/${HERO.base}-${LARGURA_FOTO}.jpg`}
+            alt="Erik e Mikaela em frente à igreja"
+            width={HERO.largura}
+            height={HERO.altura}
+            fetchPriority="high"
+            decoding="async"
+          />
+        </picture>
         <div className="hero__veil"></div>
       </div>
 
@@ -80,7 +96,7 @@ export default function Hero() {
       <div className="hero__inner">
 
         <div className="hero__logo" data-anim="sc">
-          <img src="/logo.png" alt="Erik e Mikaela — 19 de Setembro de 2026" />
+          <img src="/fotos/logo-900.png" alt="Erik e Mikaela — 19 de Setembro de 2026" />
         </div>
 
         <div className="hero__tagline" data-anim="up" data-delay="250">

@@ -90,32 +90,54 @@ export function initWeddingExperience() {
       }, Math.max(16, duration / steps));
     }
 
-    function setMusicUI(on) {
-      musicBtn.classList.toggle('playing', on);
-      musicBtn.setAttribute('aria-label', on ? 'Pausar música' : 'Tocar música');
-      musicBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    /* Adianta o download do mp3. Com preload="none" ele só era pedido no
+       instante do toque no envelope e entrava na fila atrás das fotos, então
+       o convite abria mudo por vários segundos — e era esse silêncio que
+       fazia o convidado apertar o botão achando que tinha quebrado. */
+    audio.preload = 'auto';
+    try { audio.load(); } catch (e) {}
+
+    /* `soando` = o som está de fato saindo. Diferente de musicOn, que é só a
+       intenção do usuário, e de !audio.paused, que já é verdade enquanto o
+       arquivo ainda está baixando. */
+    let soando = false;
+
+    function setMusicUI() {
+      musicBtn.classList.toggle('playing', soando);
+      musicBtn.classList.toggle('loading', musicOn && !soando);
+      musicBtn.setAttribute('aria-label',
+        musicOn ? (soando ? 'Pausar música' : 'Carregando música') : 'Tocar música');
+      musicBtn.setAttribute('aria-pressed', musicOn ? 'true' : 'false');
     }
 
     function startMusic() {
       if (musicOn) return;
       musicOn = true;
-      setMusicUI(true);
       if (canFade) audio.volume = 0;
-      audio.play().then(() => {
-        /* pode ter clicado em pausar antes do play() resolver */
-        if (!musicOn) { audio.pause(); return; }
-        fadeTo(0.65, 2200);
-      }).catch(() => {
+      setMusicUI();
+
+      const p = audio.play();
+      if (p && p.catch) p.catch((err) => {
+        /* AbortError = o próprio usuário mandou parar antes de começar a tocar.
+           Não é falha, e tratar como falha aqui apagava a intenção dele. */
+        if (err && err.name === 'AbortError') return;
         musicOn = false;
-        setMusicUI(false);
+        soando = false;
+        setMusicUI();
       });
     }
 
     function stopMusic() {
       if (!musicOn) return;
       musicOn = false;
-      setMusicUI(false); /* responde ao clique na hora, sem esperar o fade */
-      fadeTo(0, 700, () => { if (!musicOn) audio.pause(); });
+      clearInterval(fadeTimer);
+      setMusicUI(); /* responde ao clique na hora, sem esperar o fade */
+
+      if (soando) {
+        fadeTo(0, 700, () => { if (!musicOn) audio.pause(); });
+      } else {
+        audio.pause(); /* ainda carregando: corta na hora, fade não faria sentido */
+      }
     }
 
     musicBtn.addEventListener('click', (e) => {
@@ -123,10 +145,20 @@ export function initWeddingExperience() {
       if (musicOn) stopMusic(); else startMusic();
     });
 
+    /* O volume sobe quando o som REALMENTE começa. Antes isso dependia da
+       promise do play() resolver; com o mp3 preso na fila o volume ficava em
+       zero indefinidamente e o convite ficava mudo mesmo "tocando". */
+    audio.addEventListener('playing', () => {
+      soando = true;
+      setMusicUI();
+      if (musicOn && canFade) fadeTo(0.65, 2200);
+    });
+    audio.addEventListener('waiting', () => { soando = false; setMusicUI(); });
+
     /* mantém o botão coerente se o som parar por fora: central de mídia do
        celular, fone desconectado, outra aba tomando o áudio */
-    audio.addEventListener('pause', () => { if (musicOn)  { musicOn = false; setMusicUI(false); } });
-    audio.addEventListener('play',  () => { if (!musicOn) { musicOn = true;  setMusicUI(true);  } });
+    audio.addEventListener('pause', () => { soando = false; musicOn = false; setMusicUI(); });
+    audio.addEventListener('play',  () => { musicOn = true; setMusicUI(); });
 
     /* ═══════════════════════════════════════════════════════
        COUNTDOWN TIMER
@@ -404,34 +436,57 @@ export function initWeddingExperience() {
     const lightboxTrack   = document.getElementById('lightboxTrack');
     const lightboxCounter = document.getElementById('lightboxCounter');
     const galleryItems    = document.querySelectorAll('.gallery-item');
-    const galleryImages   = Array.from(galleryItems).map(item => item.querySelector('img').src);
-    const total = galleryImages.length;
+    /* a grade mostra a versão de 800 px; o carrossel pede a de 1600 px da
+       mesma foto, montada a partir do data-foto */
+    const galleryFotos    = Array.from(galleryItems).map(item => item.dataset.foto);
+    const total = galleryFotos.length;
+    const LARGURA_FOTO = 1600;
     let currentImgIdx = 0;
 
     /* Um slide por foto. O carrossel é o próprio scroll horizontal do
        navegador com scroll-snap, então arrastar com o dedo já funciona
        nativamente — sem biblioteca e sem handler de touch. */
-    galleryImages.forEach((src, i) => {
+    galleryFotos.forEach((base, i) => {
       const slide = document.createElement('div');
       slide.className = 'lightbox-slide';
 
+      /* <picture> para o navegador escolher AVIF, WebP ou JPEG. As fontes já
+         entram montadas; o que fica sob demanda é o src do <img>, que é o
+         gatilho do download. */
+      const pic = document.createElement('picture');
+      for (const [tipo, ext] of [['image/avif', 'avif'], ['image/webp', 'webp']]) {
+        const s = document.createElement('source');
+        s.type = tipo;
+        s.dataset.srcset = `/fotos/${base}-${LARGURA_FOTO}.${ext}`;
+        pic.appendChild(s);
+      }
+
       const img = document.createElement('img');
-      img.dataset.src = src;                    /* carregada sob demanda */
+      img.dataset.src = `/fotos/${base}-${LARGURA_FOTO}.jpg`;
       img.alt = `Erik e Mikaela — foto ${i + 1} de ${total}`;
       img.decoding = 'async';
       img.draggable = false;
+      pic.appendChild(img);
 
-      slide.appendChild(img);
+      slide.appendChild(pic);
       lightboxTrack.appendChild(slide);
     });
-    const slideImgs = Array.from(lightboxTrack.querySelectorAll('img'));
+    const slidePics = Array.from(lightboxTrack.querySelectorAll('picture'));
 
-    /* As fotos passam de 3 MB cada: carrega só a atual e as vizinhas, senão
-       abrir o carrossel dispararia o download da galeria inteira. */
+    /* Carrega só a foto atual e as vizinhas: abrir o carrossel não pode
+       disparar o download das 24 de uma vez. O srcset dos <source> precisa
+       ser preenchido ANTES do src do <img>, senão o navegador já começou a
+       baixar o JPEG e ignora o AVIF que chegou depois. */
     function hydrateAround(idx) {
       for (let i = idx - 1; i <= idx + 1; i++) {
-        const img = slideImgs[i];
-        if (img && !img.src && img.dataset.src) img.src = img.dataset.src;
+        const pic = slidePics[i];
+        if (!pic) continue;
+        const img = pic.querySelector('img');
+        if (!img || img.src) continue;
+        pic.querySelectorAll('source').forEach((s) => {
+          if (s.dataset.srcset) s.srcset = s.dataset.srcset;
+        });
+        img.src = img.dataset.src;
       }
     }
 

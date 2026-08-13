@@ -27,6 +27,20 @@ export default function Chrome() {
         <span className="music-btn__label" aria-hidden="true">música</span>
       </button>
 
+      {/* Botão flutuante de presente.
+          Destino ainda não definido: para apontar para um site externo troque
+          por <a className="gift-btn" href="https://..." target="_blank" rel="noopener">,
+          ou para uma seção da própria página use href="#presentes". */}
+      <button className="gift-btn" id="giftBtn" type="button">
+        <svg className="gift-btn__icon" width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M2.6 9.4h14.8v8.2a1 1 0 0 1-1 1H3.6a1 1 0 0 1-1-1V9.4Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+          <path d="M1.6 6.2h16.8v3.2H1.6V6.2Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+          <path d="M10 6.2v12.4" stroke="currentColor" strokeWidth="1.3"/>
+          <path d="M10 6.2S8.9 1.6 6.4 1.6a2.3 2.3 0 0 0 0 4.6H10Zm0 0s1.1-4.6 3.6-4.6a2.3 2.3 0 0 1 0 4.6H10Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+        </svg>
+        <span className="gift-btn__label">Presenteie o Casal</span>
+      </button>
+
 
       {/* ═══════════════════════════════════════════
            HERO

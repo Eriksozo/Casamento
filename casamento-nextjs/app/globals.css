@@ -722,7 +722,6 @@ img { display: block; max-width: 100%; height: auto; }
   display: none;
   align-items: center;
   justify-content: center;
-  padding: 40px;
   opacity: 0;
   transition: opacity 0.4s ease;
 }
@@ -732,20 +731,65 @@ img { display: block; max-width: 100%; height: auto; }
   opacity: 1;
 }
 
-.lightbox-img {
-  max-width: 90vw;
-  max-height: 85vh;
-  border-radius: 8px;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
-  transform: scale(0.9);
-  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.3, 1);
+/* Carrossel: o scroll horizontal nativo + scroll-snap dão o arrasto no
+   celular, a inércia e a parada certinha em cada foto. */
+.lightbox-track {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+
+  scrollbar-width: none;
+}
+.lightbox-track::-webkit-scrollbar { display: none; }
+
+.lightbox-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;   /* uma foto por gesto, não passa direto */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* respiro para não encostar no ✕, nas setas e no contador */
+  padding: clamp(58px, 9vh, 88px) clamp(14px, 5vw, 84px);
 }
 
-.lightbox.active .lightbox-img {
+.lightbox-slide img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+
+  -webkit-user-drag: none;
+  user-select: none;
+
+  transform: scale(0.94);
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.lightbox.active .lightbox-slide img {
   transform: scale(1);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .lightbox-track { scroll-behavior: auto; }
+  .lightbox-slide img { transform: none; transition: none; }
+}
+
 .lightbox-close {
+  z-index: 2;
   position: absolute;
   top: 24px;
   right: 24px;
@@ -769,6 +813,7 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 .lightbox-nav {
+  z-index: 2;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -795,6 +840,7 @@ img { display: block; max-width: 100%; height: auto; }
 .lightbox-next { right: 24px; }
 
 .lightbox-counter {
+  z-index: 2;
   position: absolute;
   bottom: 24px;
   left: 50%;

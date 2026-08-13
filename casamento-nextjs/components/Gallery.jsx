@@ -170,13 +170,14 @@ export default function Gallery() {
         </div>
       </section>
 
-      {/* Lightbox */}
-      <div className="lightbox" id="lightbox">
+      {/* Lightbox — carrossel: os slides são montados em weddingExperience.js
+          a partir das fotos da grade, então a lista nunca sai de sincronia */}
+      <div className="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Galeria de fotos">
+        <div className="lightbox-track" id="lightboxTrack"></div>
         <button className="lightbox-close" aria-label="Fechar">✕</button>
-        <button className="lightbox-nav lightbox-prev" aria-label="Anterior">‹</button>
-        <button className="lightbox-nav lightbox-next" aria-label="Próxima">›</button>
-        <img className="lightbox-img" id="lightboxImg" alt="" />
-        <div className="lightbox-counter" id="lightboxCounter">1 / 24</div>
+        <button className="lightbox-nav lightbox-prev" aria-label="Foto anterior">‹</button>
+        <button className="lightbox-nav lightbox-next" aria-label="Próxima foto">›</button>
+        <div className="lightbox-counter" id="lightboxCounter" aria-live="polite"></div>
       </div>
 
 

@@ -52,41 +52,81 @@ export function initWeddingExperience() {
     const musicBtn = document.getElementById('musicBtn');
     let fadeTimer;
 
+    /* estado que o usuário pediu — `audio.paused` mente enquanto o fade corre */
+    let musicOn = false;
+
+    /* O iOS trata `audio.volume` como somente leitura: a atribuição é ignorada
+       sem erro. Sem essa checagem o fade nunca alcança o alvo, o callback que
+       chama pause() nunca roda e a música fica impossível de pausar no iPhone. */
+    let canFade = true;
+    try {
+      const prev = audio.volume;
+      const probe = prev > 0.5 ? 0.25 : 0.75;
+      audio.volume = probe;
+      canFade = Math.abs(audio.volume - probe) < 0.01;
+      audio.volume = prev;
+    } catch (e) {
+      canFade = false;
+    }
+
+    /* Fade contado por passos: termina sempre, mesmo que o navegador ignore
+       as mudanças de volume — e sempre entrega o callback. */
     function fadeTo(target, duration, cb) {
       clearInterval(fadeTimer);
-      const steps = 30, interval = duration / steps;
-      const delta = (target - audio.volume) / steps;
+      if (!canFade) { if (cb) cb(); return; }
+
+      const steps = 30;
+      const from  = audio.volume;
+      let step = 0;
+
       fadeTimer = setInterval(() => {
-        audio.volume = Math.max(0, Math.min(1, audio.volume + delta));
-        if ((delta > 0 && audio.volume >= target) || (delta < 0 && audio.volume <= target)) {
+        step++;
+        audio.volume = Math.max(0, Math.min(1, from + (target - from) * (step / steps)));
+        if (step >= steps) {
           clearInterval(fadeTimer);
+          audio.volume = Math.max(0, Math.min(1, target));
           if (cb) cb();
         }
-      }, interval);
+      }, Math.max(16, duration / steps));
+    }
+
+    function setMusicUI(on) {
+      musicBtn.classList.toggle('playing', on);
+      musicBtn.setAttribute('aria-label', on ? 'Pausar música' : 'Tocar música');
+      musicBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
     }
 
     function startMusic() {
-      if (!audio.paused) return;
-      audio.volume = 0;
+      if (musicOn) return;
+      musicOn = true;
+      setMusicUI(true);
+      if (canFade) audio.volume = 0;
       audio.play().then(() => {
-        musicBtn.classList.add('playing');
-        musicBtn.setAttribute('aria-label', 'Pausar música');
+        /* pode ter clicado em pausar antes do play() resolver */
+        if (!musicOn) { audio.pause(); return; }
         fadeTo(0.65, 2200);
-      }).catch(() => {});
+      }).catch(() => {
+        musicOn = false;
+        setMusicUI(false);
+      });
+    }
+
+    function stopMusic() {
+      if (!musicOn) return;
+      musicOn = false;
+      setMusicUI(false); /* responde ao clique na hora, sem esperar o fade */
+      fadeTo(0, 700, () => { if (!musicOn) audio.pause(); });
     }
 
     musicBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      if (audio.paused) {
-        startMusic();
-      } else {
-        fadeTo(0, 1200, () => {
-          audio.pause();
-          musicBtn.classList.remove('playing');
-          musicBtn.setAttribute('aria-label', 'Tocar música');
-        });
-      }
+      if (musicOn) stopMusic(); else startMusic();
     });
+
+    /* mantém o botão coerente se o som parar por fora: central de mídia do
+       celular, fone desconectado, outra aba tomando o áudio */
+    audio.addEventListener('pause', () => { if (musicOn)  { musicOn = false; setMusicUI(false); } });
+    audio.addEventListener('play',  () => { if (!musicOn) { musicOn = true;  setMusicUI(true);  } });
 
     /* ═══════════════════════════════════════════════════════
        COUNTDOWN TIMER
@@ -360,30 +400,90 @@ export function initWeddingExperience() {
     /* ═══════════════════════════════════════════════════════
        GALLERY LIGHTBOX
     ═══════════════════════════════════════════════════════ */
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightboxImg');
+    const lightbox        = document.getElementById('lightbox');
+    const lightboxTrack   = document.getElementById('lightboxTrack');
     const lightboxCounter = document.getElementById('lightboxCounter');
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    const galleryImages = Array.from(galleryItems).map(item => item.querySelector('img').src);
+    const galleryItems    = document.querySelectorAll('.gallery-item');
+    const galleryImages   = Array.from(galleryItems).map(item => item.querySelector('img').src);
+    const total = galleryImages.length;
     let currentImgIdx = 0;
 
+    /* Um slide por foto. O carrossel é o próprio scroll horizontal do
+       navegador com scroll-snap, então arrastar com o dedo já funciona
+       nativamente — sem biblioteca e sem handler de touch. */
+    galleryImages.forEach((src, i) => {
+      const slide = document.createElement('div');
+      slide.className = 'lightbox-slide';
+
+      const img = document.createElement('img');
+      img.dataset.src = src;                    /* carregada sob demanda */
+      img.alt = `Erik e Mikaela — foto ${i + 1} de ${total}`;
+      img.decoding = 'async';
+      img.draggable = false;
+
+      slide.appendChild(img);
+      lightboxTrack.appendChild(slide);
+    });
+    const slideImgs = Array.from(lightboxTrack.querySelectorAll('img'));
+
+    /* As fotos passam de 3 MB cada: carrega só a atual e as vizinhas, senão
+       abrir o carrossel dispararia o download da galeria inteira. */
+    function hydrateAround(idx) {
+      for (let i = idx - 1; i <= idx + 1; i++) {
+        const img = slideImgs[i];
+        if (img && !img.src && img.dataset.src) img.src = img.dataset.src;
+      }
+    }
+
+    function syncCounter() {
+      lightboxCounter.textContent = `${currentImgIdx + 1} / ${total}`;
+    }
+
+    function goTo(idx, smooth) {
+      currentImgIdx = (idx + total) % total;
+      hydrateAround(currentImgIdx);
+      syncCounter();
+      lightboxTrack.scrollTo({
+        left: currentImgIdx * lightboxTrack.clientWidth,
+        behavior: smooth ? 'smooth' : 'auto'
+      });
+    }
+
+    function navLightbox(dir) {
+      const next = currentImgIdx + dir;
+      /* na virada (última → primeira) o salto é instantâneo, senão a animação
+         varreria as 25 fotos de uma vez */
+      goTo(next, next >= 0 && next < total);
+    }
+
+    /* o dedo também move o carrossel: acompanha o scroll e atualiza o contador */
+    let scrollSyncTimer;
+    lightboxTrack.addEventListener('scroll', () => {
+      clearTimeout(scrollSyncTimer);
+      scrollSyncTimer = setTimeout(() => {
+        const w = lightboxTrack.clientWidth;
+        if (!w) return;
+        const idx = Math.max(0, Math.min(total - 1, Math.round(lightboxTrack.scrollLeft / w)));
+        if (idx !== currentImgIdx) {
+          currentImgIdx = idx;
+          syncCounter();
+        }
+        hydrateAround(idx);
+      }, 90);
+    }, { passive: true });
+
     function openLightbox(idx) {
-      currentImgIdx = idx;
-      lightboxImg.src = galleryImages[idx];
-      lightboxCounter.textContent = `${idx + 1} / ${galleryImages.length}`;
       lightbox.classList.add('active');
       document.body.style.overflow = 'hidden';
+      if (lenis) lenis.stop();
+      /* só depois do display:flex o track tem largura para posicionar o scroll */
+      requestAnimationFrame(() => goTo(idx, false));
     }
 
     function closeLightbox() {
       lightbox.classList.remove('active');
       document.body.style.overflow = '';
-    }
-
-    function navLightbox(dir) {
-      currentImgIdx = (currentImgIdx + dir + galleryImages.length) % galleryImages.length;
-      lightboxImg.src = galleryImages[currentImgIdx];
-      lightboxCounter.textContent = `${currentImgIdx + 1} / ${galleryImages.length}`;
+      if (lenis) lenis.start();
     }
 
     galleryItems.forEach((item, idx) => {
@@ -394,8 +494,13 @@ export function initWeddingExperience() {
     document.querySelector('.lightbox-prev').addEventListener('click', () => navLightbox(-1));
     document.querySelector('.lightbox-next').addEventListener('click', () => navLightbox(1));
 
+    /* toque fora da foto fecha; na foto, não */
     lightbox.addEventListener('click', (e) => {
-      if (e.target === lightbox) closeLightbox();
+      if (e.target === lightbox ||
+          e.target === lightboxTrack ||
+          e.target.classList.contains('lightbox-slide')) {
+        closeLightbox();
+      }
     });
 
     document.addEventListener('keydown', (e) => {
@@ -403,6 +508,15 @@ export function initWeddingExperience() {
       if (e.key === 'Escape') closeLightbox();
       if (e.key === 'ArrowLeft') navLightbox(-1);
       if (e.key === 'ArrowRight') navLightbox(1);
+    });
+
+    /* girar o celular muda a largura do slide: reancora na foto atual.
+       Compara a largura para ignorar o resize da barra de endereço. */
+    let lastVw = window.innerWidth;
+    window.addEventListener('resize', () => {
+      if (window.innerWidth === lastVw) return;
+      lastVw = window.innerWidth;
+      if (lightbox.classList.contains('active')) goTo(currentImgIdx, false);
     });
 
     /* ═══════════════════════════════════════════════════════

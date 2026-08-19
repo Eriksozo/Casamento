@@ -1,63 +1,3 @@
-import { pixComValor, PIX_BASE, RECEBEDOR } from '../lib/pix';
-
-/* Cotas com nome e valor já embutidos no código Pix. A ideia é tirar do
-   convidado a pergunta "quanto?", que é onde a maioria desiste, e trocar
-   um valor abstrato por uma cena concreta. A última é sem valor: usa o
-   código original do banco, intacto. */
-const COTAS = [
-  {
-    id: 'brinde',
-    valor: 50,
-    curto: 'Um brinde',
-    titulo: 'Um brinde',
-    frase: 'A primeira taça que a gente levanta como casados.',
-    icone: (
-      <>
-        <path d="M6 3h10l-1 6a4 4 0 0 1-8 0L6 3Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
-        <path d="M11 15v4M8 19h6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-      </>
-    ),
-  },
-  {
-    id: 'luademel',
-    valor: 100,
-    curto: 'Lua de mel',
-    titulo: 'Uma noite da lua de mel',
-    frase: 'Uma noite a mais para a gente ficar longe do mundo.',
-    icone: (
-      <>
-        <path d="M16.5 13.2A7 7 0 0 1 8.8 5.5a7 7 0 1 0 7.7 7.7Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
-      </>
-    ),
-  },
-  {
-    id: 'cozinha',
-    valor: 200,
-    curto: 'A cozinha',
-    titulo: 'A nossa primeira cozinha',
-    frase: 'As panelas onde vão sair muitos almoços de domingo.',
-    icone: (
-      <>
-        <path d="M4 9h14v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
-        <path d="M18 10.5h2.2a1.8 1.8 0 0 1 0 3.6H18" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
-        <path d="M8 6V3.5M11 6V3M14 6V3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-      </>
-    ),
-  },
-  {
-    id: 'livre',
-    valor: null,
-    curto: 'Como quiser',
-    titulo: 'Do jeito que o coração mandar',
-    frase: 'Você escolhe o valor na hora de pagar.',
-    icone: (
-      <>
-        <path d="M11 18.5 4.3 11.8a4.2 4.2 0 0 1 5.9-5.9l.8.8.8-.8a4.2 4.2 0 0 1 5.9 5.9L11 18.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
-      </>
-    ),
-  },
-];
-
 const LOJAS = [
   {
     nome: 'Lojas Perin',
@@ -77,8 +17,6 @@ const MENSAGEM = encodeURIComponent(
   'Quero a lista de presentes para o casal Erik e Mikaela'
 );
 
-const emReais = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
 export default function Presentes() {
   return (
     <section className="presentes" id="presentes">
@@ -87,73 +25,11 @@ export default function Presentes() {
 
         <p className="presentes-intro" data-anim="up" data-delay="80">
           A presença de vocês no nosso dia já é o maior presente.
-          Se quiserem nos abençoar com algo a mais, escolhemos jeitos
-          simples de fazer isso.
+          Se quiserem nos abençoar com algo a mais, montamos nossa lista
+          nestas duas lojas.
         </p>
 
         <div className="presentes-grid">
-          {/* ── PIX ── */}
-          <article className="presente-card" data-anim="up" data-delay="160">
-            <svg className="presente-card__icon" viewBox="0 0 42 42" fill="none" aria-hidden="true">
-              <path d="M13.5,13.5 L21,6 L28.5,13.5" stroke="#8B6848" strokeWidth="1.3" strokeLinejoin="round"/>
-              <path d="M13.5,28.5 L21,36 L28.5,28.5" stroke="#8B6848" strokeWidth="1.3" strokeLinejoin="round"/>
-              <path d="M13.5,13.5 L6,21 L13.5,28.5" stroke="#8B6848" strokeWidth="1.3" strokeLinejoin="round"/>
-              <path d="M28.5,13.5 L36,21 L28.5,28.5" stroke="#8B6848" strokeWidth="1.3" strokeLinejoin="round"/>
-              <circle cx="21" cy="21" r="4.2" stroke="#8B6848" strokeWidth="1.3"/>
-            </svg>
-            <p className="card__label">Pix</p>
-            <p className="presente-card__texto">
-              Escolha uma cota — o valor já vai junto no código.
-            </p>
-
-            <div className="cotas" role="group" aria-label="Escolha uma cota">
-              {COTAS.map((c, i) => (
-                <button
-                  key={c.id}
-                  type="button"
-                  className={`cota${i === 0 ? ' ativa' : ''}`}
-                  aria-pressed={i === 0 ? 'true' : 'false'}
-                  data-pix={pixComValor(c.valor)}
-                  data-titulo={c.titulo}
-                  data-frase={c.frase}
-                >
-                  <svg className="cota__icone" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-                    {c.icone}
-                  </svg>
-                  <span className="cota__nome">{c.curto}</span>
-                  <span className="cota__valor">
-                    {c.valor ? emReais(c.valor) : 'Você escolhe'}
-                  </span>
-                </button>
-              ))}
-            </div>
-
-            <div className="pix">
-              <p className="pix__titulo" id="pixTitulo">{COTAS[0].titulo}</p>
-              <p className="pix__frase" id="pixFrase">{COTAS[0].frase}</p>
-
-              <button className="pix__copiar" id="pixCopiar" type="button">
-                <svg className="pix__copiar-icone" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                  <rect x="7" y="7" width="10.5" height="12" rx="1.6" stroke="currentColor" strokeWidth="1.4"/>
-                  <path d="M13.4 4.4V3.6A1.6 1.6 0 0 0 11.8 2H4.1A1.6 1.6 0 0 0 2.5 3.6v9.8a1.6 1.6 0 0 0 1.6 1.6h.8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-                </svg>
-                <span className="pix__copiar-texto">Copiar código Pix</span>
-              </button>
-
-              <p className="pix__passo" id="pixPasso">
-                Cole em <strong>Pix Copia e Cola</strong> no app do seu banco.
-              </p>
-
-              {/* o código continua acessível para quem quiser conferir ou
-                  copiar na mão, mas sem dominar o card */}
-              <details className="pix__detalhes">
-                <summary>Ver o código</summary>
-                <p className="pix__recebedor">Recebedor: {RECEBEDOR}</p>
-                <code className="pix__codigo" id="pixCodigo">{pixComValor(COTAS[0].valor)}</code>
-              </details>
-            </div>
-          </article>
-
           {/* ── LISTA DE PRESENTES ── */}
           <article className="presente-card" data-anim="up" data-delay="280">
             <svg className="presente-card__icon" viewBox="0 0 42 42" fill="none" aria-hidden="true">

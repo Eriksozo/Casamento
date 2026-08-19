@@ -1051,14 +1051,12 @@ img { display: block; max-width: 100%; height: auto; }
   line-height: 1.7;
 }
 
+/* um card só, então centraliza e limita a largura em vez de esticar */
 .presentes-grid {
   display: grid;
-  grid-template-columns: 1fr;
   gap: var(--gap-sm);
-  margin-top: clamp(28px, 5vw, 44px);
-}
-@media (min-width: 720px) {
-  .presentes-grid { grid-template-columns: 1fr 1fr; }
+  max-width: 560px;
+  margin: clamp(28px, 5vw, 44px) auto 0;
 }
 
 .presente-card {
@@ -1088,167 +1086,6 @@ img { display: block; max-width: 100%; height: auto; }
   font-size: var(--t-body);
   line-height: 1.65;
   max-width: 30ch;
-}
-
-/* ── cotas: escolher um valor com nome, em vez de decidir "quanto?" ── */
-.cotas {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  width: 100%;
-  margin-top: 2px;
-}
-
-.cota {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 12px 8px;
-  min-height: 92px;
-  justify-content: center;
-
-  font-family: 'Cormorant SC', serif;
-  color: var(--brown);
-  background: rgba(249, 249, 244, .55);
-  border: 1px solid rgba(136, 150, 69, .25);
-  border-radius: 3px;
-  cursor: pointer;
-  transition: border-color .2s ease, background .2s ease, color .2s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-.cota:hover { border-color: rgba(136, 150, 69, .55); background: rgba(249, 249, 244, .9); }
-.cota:focus-visible { outline: 2px solid var(--sage); outline-offset: 2px; }
-
-.cota.ativa {
-  background: var(--olive);
-  border-color: var(--olive);
-  color: var(--cream);
-}
-
-.cota__icone { width: 22px; height: 22px; flex-shrink: 0; margin-bottom: 2px; }
-
-.cota__nome {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 1rem;
-  line-height: 1.15;
-  text-align: center;
-}
-.cota__valor {
-  font-size: .68rem;
-  letter-spacing: 1.6px;
-  text-transform: uppercase;
-  line-height: 1.2;
-  text-align: center;
-  opacity: .75;
-}
-
-/* ── bloco do Pix ── */
-.pix {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(136, 150, 69, .2);
-}
-
-.pix__titulo {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(1.15rem, 3vw, 1.35rem);
-  color: var(--dark);
-  line-height: 1.25;
-}
-.pix__frase {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-style: italic;
-  font-size: .96rem;
-  color: var(--brown);
-  opacity: .85;
-  line-height: 1.5;
-  max-width: 32ch;
-}
-
-.pix__copiar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  min-height: 50px;
-  margin-top: 4px;
-  padding: 12px 18px;
-
-  font-family: 'Cormorant SC', serif;
-  font-size: var(--t-label);
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  color: var(--cream);
-
-  background: var(--olive);
-  border: 1px solid var(--olive);
-  border-radius: 3px;
-  cursor: pointer;
-  transition: background .25s ease, border-color .25s ease, transform .2s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-.pix__copiar:hover  { background: var(--sage); border-color: var(--sage); }
-.pix__copiar:active { transform: scale(.985); }
-.pix__copiar:focus-visible { outline: 2px solid var(--sage); outline-offset: 2px; }
-.pix__copiar.copiado { background: var(--dark); border-color: var(--dark); }
-.pix__copiar-icone { width: 16px; height: 16px; flex-shrink: 0; }
-
-/* o passo seguinte, dito antes de o convidado se perguntar */
-.pix__passo {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: .9rem;
-  color: var(--brown);
-  opacity: .75;
-  line-height: 1.45;
-}
-.pix__passo strong { font-weight: 500; color: var(--olive); opacity: 1; }
-.pix__passo.ok { color: var(--olive); opacity: 1; }
-
-.pix__detalhes { width: 100%; margin-top: 2px; }
-.pix__detalhes summary {
-  font-family: 'Cormorant SC', serif;
-  font-size: var(--t-label);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--sage);
-  cursor: pointer;
-  list-style: none;
-  padding: 6px 0;
-}
-.pix__detalhes summary::-webkit-details-marker { display: none; }
-.pix__detalhes summary:hover { color: var(--olive); }
-
-.pix__recebedor {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-style: italic;
-  font-size: .9rem;
-  color: var(--brown);
-  opacity: .85;
-  margin-bottom: 6px;
-}
-
-.pix__codigo {
-  display: block;
-  width: 100%;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: .64rem;
-  line-height: 1.55;
-  color: var(--dark);
-  opacity: .7;
-  overflow-wrap: anywhere;
-  text-align: left;
-  padding: 9px 11px;
-  border-radius: 3px;
-  background: rgba(61, 53, 24, .05);
-  user-select: all;
-  -webkit-user-select: all;
 }
 
 /* ── lojas: linhas que precisam GRITAR que sao clicaveis ── */
@@ -1326,8 +1163,8 @@ img { display: block; max-width: 100%; height: auto; }
 .loja:hover .loja__acao svg { transform: translateX(3px); }
 
 @media (prefers-reduced-motion: reduce) {
-  .presente-card, .pix__copiar, .cota, .loja, .loja__acao svg { transition: none; }
-  .presente-card:hover, .pix__copiar:active, .loja:hover, .loja:active { transform: none; }
+  .presente-card, .loja, .loja__acao svg { transition: none; }
+  .presente-card:hover, .loja:hover, .loja:active { transform: none; }
 }
 
 /* ═══════════════════════════════════════

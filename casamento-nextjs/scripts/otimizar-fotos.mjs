@@ -50,17 +50,33 @@ const PERFIS = {
 
 const kb = (n) => (n / 1024).toFixed(0).padStart(4);
 
-async function gerar(arquivo) {
+/* Se existir uma versão editada (fundo borrado, por exemplo), ela manda.
+   O original fica intocado em fotos-originais/ — apagar o arquivo de
+   editadas/ é o suficiente para voltar atrás. */
+async function fonte(arquivo) {
+  const editada = path.join(ORIGEM, 'editadas', arquivo);
+  try { await stat(editada); return { caminho: editada, editada: true }; }
+  catch { return { caminho: path.join(ORIGEM, arquivo), editada: false }; }
+}
+
+async function gerar(arquivo, pular) {
   const base = path.basename(arquivo, path.extname(arquivo));
-  const src  = sharp(path.join(ORIGEM, arquivo)).rotate(); /* respeita EXIF se entrar foto nova */
-  const meta = await src.metadata();
+  const { caminho, editada } = await fonte(arquivo);
+
+  if (pular) {
+    /* não reencoda, mas ainda precisa das dimensões para o manifesto */
+    const d = await sharp(path.join(DESTINO, `${base}-${LARGURAS.grade}.jpg`)).metadata();
+    return { base, largura: d.width, altura: d.height };
+  }
+
+  const meta = await sharp(caminho).metadata();
 
   const saidas = [];
   for (const [papel, largura] of Object.entries(LARGURAS)) {
     for (const [formato, opcoes] of Object.entries(PERFIS[papel])) {
       const ext  = formato === 'jpeg' ? 'jpg' : formato;
       const nome = `${base}-${largura}.${ext}`;
-      const buf  = await sharp(path.join(ORIGEM, arquivo))
+      const buf  = await sharp(caminho)
         .rotate()
         .resize({ width: largura, kernel: 'lanczos3', withoutEnlargement: true })
         [formato](opcoes)
@@ -75,7 +91,7 @@ async function gerar(arquivo) {
   const dimGrade = await sharp(path.join(DESTINO, `${base}-${LARGURAS.grade}.jpg`)).metadata();
 
   const total = saidas.reduce((s, o) => s + o.bytes, 0);
-  console.log(`${base}  ${meta.width}x${meta.height} -> ${kb(total)} KB em 6 arquivos ` +
+  console.log(`${base}  ${meta.width}x${meta.height}${editada ? ' [editada]' : ''} -> ${kb(total)} KB em 6 arquivos ` +
               `(avif ${kb(saidas.find(o => o.nome.endsWith(`${LARGURAS.foto}.avif`)).bytes)} KB na foto grande)`);
 
   return { base, largura: dimGrade.width, altura: dimGrade.height, original: { w: meta.width, h: meta.height } };
@@ -89,10 +105,14 @@ const arquivos = (await readdir(ORIGEM))
   .filter((f) => f !== 'gallery-07.jpg') /* cópia byte-a-byte da 08 e não usada */
   .sort();
 
-console.log(`Otimizando ${arquivos.length} fotos de ${path.relative(RAIZ, ORIGEM)}/\n`);
+/* argumento opcional: regenera só as fotos cujo nome bate, o resto é
+   reaproveitado. Útil depois de editar uma foto só. */
+const filtro = process.argv[2];
+console.log(`Otimizando ${arquivos.length} fotos de ${path.relative(RAIZ, ORIGEM)}/` +
+            (filtro ? ` (só as que casam com "${filtro}")` : '') + '\n');
 
 const fichas = [];
-for (const f of arquivos) fichas.push(await gerar(f));
+for (const f of arquivos) fichas.push(await gerar(f, filtro && !f.includes(filtro)));
 
 /* Os logos: PNG com transparência, exibidos no máximo a 297 px CSS (891 px
    numa tela DPR3). Vinham em 1254 px e 774 KB. AVIF e WebP guardam o canal

@@ -348,6 +348,26 @@ export function initWeddingExperience() {
         );
       }
 
+      /* ── Presentes ── */
+      const presIntro = document.querySelector('.presentes-intro');
+      if (presIntro) {
+        gsap.fromTo(presIntro, { opacity: 0, y: 20 }, {
+          scrollTrigger: { trigger: presIntro, start: 'top 88%' },
+          opacity: 1, y: 0, duration: 0.9, ease: 'power3.out'
+        });
+      }
+      const presCards = document.querySelectorAll('.presente-card');
+      if (presCards.length) {
+        gsap.fromTo(presCards,
+          { opacity: 0, y: 40, scale: 0.97 },
+          {
+            scrollTrigger: { trigger: '.presentes-grid', start: 'top 85%' },
+            opacity: 1, y: 0, scale: 1,
+            duration: 0.9, stagger: 0.14, ease: 'power3.out'
+          }
+        );
+      }
+
       /* ── Verse ornamentos ── */
       gsap.fromTo('.verse-rule',
         { scaleX: 0, opacity: 0 },
@@ -427,6 +447,18 @@ export function initWeddingExperience() {
           y: -70, ease: 'none'
         });
       }
+      /* Rede de segurança: o CSS deixa todo [data-anim] em opacity 0, então
+         uma seção nova sem regra própria aqui ficaria invisível para sempre
+         — foi exatamente o que aconteceu ao criar a seção de presentes.
+         Isto revela o que sobrou, sem duplicar o que já tem animação. */
+      document.querySelectorAll('[data-anim]').forEach((el) => {
+        if (gsap.getTweensOf(el).length) return;
+        gsap.fromTo(el, { opacity: 0, y: 18 }, {
+          scrollTrigger: { trigger: el, start: 'top 92%' },
+          opacity: 1, y: 0, duration: 0.8, ease: 'power3.out'
+        });
+      });
+
     }
 
     /* ═══════════════════════════════════════════════════════
@@ -582,6 +614,21 @@ export function initWeddingExperience() {
       setTimeout(() => cue.classList.add('show'), 2400);
       window.addEventListener('scroll', () => cue.classList.remove('show'), { once: true, passive: true });
     }
+
+    /* ═══════════════════════════════════════════════════════
+       ÂNCORAS INTERNAS
+       Com o Lenis ativo o salto nativo do navegador briga com o scroll
+       suave e o destino fica torto — delega para ele.
+    ═══════════════════════════════════════════════════════ */
+    document.querySelectorAll('a[href^="#"]').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        const alvo = document.querySelector(link.getAttribute('href'));
+        if (!alvo) return;
+        e.preventDefault();
+        if (lenis) lenis.scrollTo(alvo, { duration: 1.3 });
+        else alvo.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
 
     /* ═══════════════════════════════════════════════════════
        ENVELOPE — abre, pétala burst, inicia tudo

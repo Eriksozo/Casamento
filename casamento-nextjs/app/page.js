@@ -5,6 +5,7 @@ import Envelope from '../components/Envelope';
 import Chrome from '../components/Chrome';
 import Hero from '../components/Hero';
 import Details from '../components/Details';
+import Presentes from '../components/Presentes';
 import Gallery from '../components/Gallery';
 import Verse from '../components/Verse';
 import Footer from '../components/Footer';
@@ -24,6 +25,7 @@ export default function Page() {
       <Chrome />
       <Hero />
       <Details />
+      <Presentes />
       <Gallery />
       <Verse />
       <Footer />

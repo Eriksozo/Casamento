@@ -1090,23 +1090,169 @@ img { display: block; max-width: 100%; height: auto; }
   max-width: 30ch;
 }
 
-/* marcador temporário: sai quando o Pix e a lista forem definidos */
-.presente-card__pendente {
+/* lista de lojas dentro do card de presentes */
+.lojas {
+  list-style: none;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.loja {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  min-height: 56px;                 /* alvo de toque confortável no celular */
+  text-align: left;
+  text-decoration: none;
+  border: 1px solid rgba(136, 150, 69, .28);
+  border-radius: 3px;
+  background: rgba(249, 249, 244, .6);
+  transition: border-color .25s ease, background .25s ease, transform .25s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.loja:hover,
+.loja:focus-visible {
+  border-color: var(--sage);
+  background: rgba(249, 249, 244, .95);
+  transform: translateY(-1px);
+  outline: none;
+}
+.loja:focus-visible { outline: 2px solid var(--sage); outline-offset: 2px; }
+.loja:active { transform: scale(.99); }
+
+.loja__zap {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  color: var(--olive);
+}
+
+.loja__texto { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+
+.loja__nome {
+  font-family: 'Cormorant SC', serif;
+  font-size: var(--t-label);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--dark);
+}
+.loja__local {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: .92rem;
+  color: var(--brown);
+  opacity: .8;
+  line-height: 1.3;
+}
+.loja__contato {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: .95rem;
+  color: var(--olive);
+  line-height: 1.3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loja { transition: none; }
+  .loja:hover, .loja:focus-visible, .loja:active { transform: none; }
+}
+
+/* ── Pix copia e cola ── */
+.pix {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(136, 150, 69, .2);
+}
+
+.pix__rotulo {
   font-family: 'Cormorant SC', serif;
   font-size: var(--t-label);
   letter-spacing: 2.5px;
   text-transform: uppercase;
-  color: var(--sage);
-  opacity: .55;
-  border-top: 1px solid rgba(136,150,69,.2);
-  padding-top: 12px;
-  margin-top: 4px;
-  width: 100%;
+  color: var(--olive);
 }
 
+.pix__recebedor {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: .95rem;
+  color: var(--brown);
+  opacity: .85;
+}
+
+/* o código inteiro fica visível e selecionável: se o botão falhar, dá para
+   copiar na mão */
+.pix__codigo {
+  width: 100%;
+  /* exatamente 3 linhas + o padding: cortar no meio de uma linha parecia
+     defeito, e não conteúdo rolável */
+  max-height: calc(1.55em * 3 + 18px);
+  overflow-y: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .66rem;
+  line-height: 1.55;
+  letter-spacing: .2px;
+  color: var(--dark);
+  opacity: .72;
+  overflow-wrap: anywhere;
+  text-align: left;
+  padding: 9px 11px;
+  border-radius: 3px;
+  background: rgba(61, 53, 24, .05);
+  user-select: all;                 /* um toque seleciona tudo */
+  -webkit-user-select: all;
+
+  /* o padding de baixo faz parte da área rolável, então sempre sobra um
+     naco de linha ali — esmaecer transforma isso em "tem mais abaixo" */
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 74%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 74%, transparent 100%);
+}
+
+.pix__copiar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 46px;
+  margin-top: 2px;
+  padding: 10px 18px;
+
+  font-family: 'Cormorant SC', serif;
+  font-size: var(--t-label);
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--cream);
+
+  background: var(--olive);
+  border: 1px solid var(--olive);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background .25s ease, border-color .25s ease, transform .2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.pix__copiar:hover  { background: var(--sage); border-color: var(--sage); }
+.pix__copiar:active { transform: scale(.985); }
+.pix__copiar:focus-visible { outline: 2px solid var(--sage); outline-offset: 2px; }
+
+.pix__copiar.copiado {
+  background: var(--dark);
+  border-color: var(--dark);
+}
+
+.pix__copiar-icone { width: 16px; height: 16px; flex-shrink: 0; }
+
 @media (prefers-reduced-motion: reduce) {
-  .presente-card { transition: none; }
-  .presente-card:hover { transform: none; }
+  .presente-card, .pix__copiar { transition: none; }
+  .presente-card:hover, .pix__copiar:active { transform: none; }
 }
 
 /* ═══════════════════════════════════════
@@ -1141,9 +1287,16 @@ img { display: block; max-width: 100%; height: auto; }
   cursor: pointer;
   text-decoration: none;   /* virou <a> ao ganhar a âncora #presentes */
 
-  transition: transform .25s ease, box-shadow .25s ease, background .25s ease;
+  transition: transform .3s ease, box-shadow .25s ease, background .25s ease, opacity .3s ease;
   -webkit-tap-highlight-color: transparent;
   outline: none;
+}
+
+/* dentro da própria seção de presentes o botão sai de cena */
+.gift-btn.escondido {
+  opacity: 0;
+  transform: translateY(14px);
+  pointer-events: none;
 }
 
 .gift-btn__icon  { flex-shrink: 0; }

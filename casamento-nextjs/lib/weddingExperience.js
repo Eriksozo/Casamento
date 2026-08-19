@@ -616,6 +616,69 @@ export function initWeddingExperience() {
     }
 
     /* ═══════════════════════════════════════════════════════
+       BOTÃO FLUTUANTE DE PRESENTE
+       Some enquanto a seção está à vista: ali ele só cobriria justamente
+       o conteúdo que promete levar.
+    ═══════════════════════════════════════════════════════ */
+    const giftBtn      = document.getElementById('giftBtn');
+    const secPresentes = document.getElementById('presentes');
+    if (giftBtn && secPresentes && 'IntersectionObserver' in window) {
+      new IntersectionObserver(
+        ([entrada]) => giftBtn.classList.toggle('escondido', entrada.isIntersecting),
+        { threshold: 0.2 }
+      ).observe(secPresentes);
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       PIX COPIA E COLA
+    ═══════════════════════════════════════════════════════ */
+    const pixBtn = document.getElementById('pixCopiar');
+    const pixCod = document.getElementById('pixCodigo');
+    if (pixBtn && pixCod) {
+      const rotulo   = pixBtn.querySelector('.pix__copiar-texto');
+      const original = rotulo.textContent;
+      let voltar;
+
+      async function copiar(texto) {
+        /* navigator.clipboard só existe em contexto seguro (https ou
+           localhost) — o caminho de baixo cobre http e navegador antigo */
+        try {
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(texto);
+            return true;
+          }
+        } catch (e) {}
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = texto;
+          ta.setAttribute('readonly', '');
+          ta.style.cssText = 'position:fixed;top:-1000px;opacity:0';
+          document.body.appendChild(ta);
+          ta.select();
+          ta.setSelectionRange(0, texto.length); /* o iOS ignora só o select() */
+          const ok = document.execCommand('copy');
+          ta.remove();
+          return ok;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      pixBtn.addEventListener('click', async () => {
+        const ok = await copiar(pixCod.textContent.trim());
+        clearTimeout(voltar);
+        pixBtn.classList.toggle('copiado', ok);
+        /* se falhar, o código continua na tela e selecionável — o convidado
+           não fica sem saída */
+        rotulo.textContent = ok ? 'Código copiado!' : 'Toque no código e copie';
+        voltar = setTimeout(() => {
+          pixBtn.classList.remove('copiado');
+          rotulo.textContent = original;
+        }, 2600);
+      });
+    }
+
+    /* ═══════════════════════════════════════════════════════
        ÂNCORAS INTERNAS
        Com o Lenis ativo o salto nativo do navegador briga com o scroll
        suave e o destino fica torto — delega para ele.

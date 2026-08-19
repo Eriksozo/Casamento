@@ -100,9 +100,16 @@ async function gerar(arquivo, pular) {
 const t0 = Date.now();
 await mkdir(DESTINO, { recursive: true });
 
+/* Fotos que ficam de fora do site. O arquivo continua em fotos-originais/,
+   então voltar atrás é só tirar o nome daqui e rodar o script de novo. */
+const FORA = new Set([
+  'gallery-07.jpg', /* cópia byte-a-byte da 08 */
+  'gallery-02.jpg', /* removida a pedido */
+]);
+
 const arquivos = (await readdir(ORIGEM))
   .filter((f) => /^(gallery-\d+|hero-bg)\.jpe?g$/i.test(f))
-  .filter((f) => f !== 'gallery-07.jpg') /* cópia byte-a-byte da 08 e não usada */
+  .filter((f) => !FORA.has(f))
   .sort();
 
 /* argumento opcional: regenera só as fotos cujo nome bate, o resto é

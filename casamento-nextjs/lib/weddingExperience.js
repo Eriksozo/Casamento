@@ -630,14 +630,42 @@ export function initWeddingExperience() {
     }
 
     /* ═══════════════════════════════════════════════════════
-       PIX COPIA E COLA
+       PIX — cotas e copiar
     ═══════════════════════════════════════════════════════ */
     const pixBtn = document.getElementById('pixCopiar');
     const pixCod = document.getElementById('pixCodigo');
     if (pixBtn && pixCod) {
-      const rotulo   = pixBtn.querySelector('.pix__copiar-texto');
-      const original = rotulo.textContent;
+      const cotas     = Array.from(document.querySelectorAll('.cota'));
+      const pixTitulo = document.getElementById('pixTitulo');
+      const pixFrase  = document.getElementById('pixFrase');
+      const pixPasso  = document.getElementById('pixPasso');
+      const rotulo    = pixBtn.querySelector('.pix__copiar-texto');
+
+      const rotuloBase = rotulo.textContent;
+      const passoBase  = pixPasso.innerHTML;
       let voltar;
+
+      /* cada cota carrega o próprio código, já com o valor embutido e o CRC
+         refeito — ver lib/pix.js */
+      cotas.forEach((cota) => {
+        cota.addEventListener('click', () => {
+          cotas.forEach((c) => {
+            const ativa = c === cota;
+            c.classList.toggle('ativa', ativa);
+            c.setAttribute('aria-pressed', ativa ? 'true' : 'false');
+          });
+          pixCod.textContent  = cota.dataset.pix;
+          pixTitulo.textContent = cota.dataset.titulo;
+          pixFrase.textContent  = cota.dataset.frase;
+
+          /* trocar de cota invalida o "copiado!" da anterior */
+          clearTimeout(voltar);
+          pixBtn.classList.remove('copiado');
+          rotulo.textContent = rotuloBase;
+          pixPasso.classList.remove('ok');
+          pixPasso.innerHTML = passoBase;
+        });
+      });
 
       async function copiar(texto) {
         /* navigator.clipboard só existe em contexto seguro (https ou
@@ -668,13 +696,19 @@ export function initWeddingExperience() {
         const ok = await copiar(pixCod.textContent.trim());
         clearTimeout(voltar);
         pixBtn.classList.toggle('copiado', ok);
-        /* se falhar, o código continua na tela e selecionável — o convidado
-           não fica sem saída */
-        rotulo.textContent = ok ? 'Código copiado!' : 'Toque no código e copie';
+        rotulo.textContent = ok ? 'Código copiado!' : 'Não deu — copie na mão';
+        pixPasso.classList.toggle('ok', ok);
+        /* se falhar, o código continua na tela dentro de "Ver o código",
+           selecionável de um toque só */
+        pixPasso.innerHTML = ok
+          ? 'Agora é só abrir o app do banco e colar em <strong>Pix Copia e Cola</strong>. Obrigado, de coração.'
+          : 'Abra <strong>Ver o código</strong> aqui embaixo, toque nele e copie.';
         voltar = setTimeout(() => {
           pixBtn.classList.remove('copiado');
-          rotulo.textContent = original;
-        }, 2600);
+          rotulo.textContent = rotuloBase;
+          pixPasso.classList.remove('ok');
+          pixPasso.innerHTML = passoBase;
+        }, 6000);
       });
     }
 
